@@ -46,67 +46,7 @@ serverStart();
 
 //TelegrammBot
 
-const webAppUrl = 'https://6552-82-215-108-49.ngrok-free.app';
-const token ='6708896074:AAECo-sU1KRPvZrfy6O2Z-fW8sKANRuPktc';
-const bot = new TelegramBot(token, { polling: true });
 
-
- const start = () => {
-    bot.setMyCommands([
-        {command:'/start',description:'Запуск бота'},
-        {command:'/admin',description:'Администраторский раздел'}
-        
-    ])
-    bot.on('message', async msg => {
-        const chatId = msg.chat.id;
-        const text = msg.text;
-        
-       await bot.sendMessage(chatId, 'Добро пожаловать в наш онлайн ресторан! Для просмотра меню и оформления заказа перейдите в нужный раздел  по кнопке ниже', {
-            reply_markup: {
-                keyboard: [
-                    [
-                        {
-                            text: 'Меню',
-                            web_app:{url:webAppUrl}
-                        }
-                    ]
-                ],
-                resize_keyboard: true // Добавлен параметр resize_keyboard для корректного отображения клавиатуры
-            }
-        });
-
-        if (msg?.web_app_data?.data) {
-            try {
-                const data = JSON.parse(msg?.web_app_data.data);
-                console.log(data);
-        
-                const orderItems = data.selectedProductNames.map((name, index) => (
-                    `${name} x${data.selectedProductQuantity[index]}шт.`
-                )).join('\n------------------------\n');
-        
-                bot.sendMessage(chatId, `${data.clientName}, спасибо за оформление заявки!`);
-                
-                bot.sendMessage(chatId, `<b>Ваш заказ:</b>\n${orderItems}`+
-                                         '\n-----------------------------\n' +
-                                         '<b>Итог</b>'+ 
-                                         data.getBasketTotal, { parse_mode: 'HTML' });
-
-                bot.sendMessage(chatId, '<b>Ваши данные:</b>\n' +
-                                         '<u>Имя:</u> ' + data.clientName + '\n' +
-                                         '<u>Адрес доставки:</u> ' + data.address + '\n' +
-                                         '<u>Номер телефона:</u> ' + data.phoneNumber + '\n' + 
-                                         '<u>Тип оплаты:</u>'      + data.selectedPayment 
-                                         , { parse_mode: 'HTML' });
-            } catch (e) {
-                console.log(e);
-            }
-        }
-    });
-
-    
- }
-
- start()
 
 
 
